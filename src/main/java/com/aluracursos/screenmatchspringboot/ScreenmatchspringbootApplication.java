@@ -24,10 +24,10 @@ public class ScreenmatchspringbootApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("Hola mundo desde screenmatch con Springboot");
-		//Principal principal = new Principal();
-		//principal.muestraElMenu();
-		EjemploStreams ejemploStreams = new EjemploStreams();
-		ejemploStreams.muestraEjemplo();
+		Principal principal = new Principal();
+		principal.muestraElMenu();
+		//EjemploStreams ejemploStreams = new EjemploStreams();
+		//ejemploStreams.muestraEjemplo();
 
 
 	}

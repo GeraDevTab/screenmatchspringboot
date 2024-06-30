@@ -3,12 +3,17 @@ package com.aluracursos.screenmatchspringboot.principal;
 import com.aluracursos.screenmatchspringboot.model.DatosEpisodio;
 import com.aluracursos.screenmatchspringboot.model.DatosSerie;
 import com.aluracursos.screenmatchspringboot.model.DatosTemporadas;
+import com.aluracursos.screenmatchspringboot.model.Episodio;
 import com.aluracursos.screenmatchspringboot.service.ConsumoAPI;
 import com.aluracursos.screenmatchspringboot.service.ConvierteDatos;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner teclado = new Scanner(System.in);
@@ -45,6 +50,50 @@ public class Principal {
             }
         }
         //mejoria usando funcuines lambda
-        temporadas.forEach(t  -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+        //temporadas.forEach(t  -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+
+        //Convertir todas las informaciones a una lista del tipo DatosEpisodio
+
+        List<DatosEpisodio> datosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())
+                //con el tolist crearia una lista inmutable
+                //.toList()
+                //se puede seguir agregando mas datos en el collector
+                .collect(Collectors.toList());
+        //top 5 episodios
+        System.out.println("Top 5 episodios");
+        datosEpisodios.stream()
+                .filter(e -> !e.evaluacion().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DatosEpisodio::evaluacion).reversed())
+                .limit(5)
+                .forEach(System.out::println);
+
+        //convirtiendo los datos a una lista del tipo Episodio
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                    .map(d -> new Episodio(t.numero(),d)))
+                .collect(Collectors.toList());
+
+        episodios.forEach(System.out::println);
+
+        //busqueda de episodios a partir de x año
+        System.out.println("Por favor indica el año a partir del cual deseas ver los episodios");
+        var fecha = teclado.nextInt();
+        teclado.nextLine();
+
+        LocalDate fechaDeBusqueda = LocalDate.of(fecha,1,1);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        episodios.stream()
+                .filter(e -> e.getFechaDeLanzamiento() != null && e.getFechaDeLanzamiento().isAfter(fechaDeBusqueda))
+                .forEach(e -> System.out.println(
+                        "Temporada "+e.getNumeroTemporada()+
+                                " Episodio "+e.getTitulo()+
+                                " Fecha "+e.getFechaDeLanzamiento().format(dtf)
+                ));
+
+
+
     }
 }
