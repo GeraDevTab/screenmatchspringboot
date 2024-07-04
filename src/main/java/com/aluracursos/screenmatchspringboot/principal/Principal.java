@@ -18,7 +18,40 @@ public class Principal {
     private final String URL_BASE = "http://www.omdbapi.com/?&t=";
     private final String API_KEY = "&apikey=4830f843";
     private ConvierteDatos conversor = new ConvierteDatos();
+    private List<DatosSerie> datosSeries = new ArrayList<>();
+
     public void muestraElMenu(){
+
+        var opcion = -1;
+        while(opcion!=0){
+            var menu = """
+                    1- Buscar series
+                    2- Buscar episodios
+                    3- Mostrar series buscadas
+                    0- Salir
+                    """;
+            System.out.println(menu);
+            opcion = teclado.nextInt();
+            teclado.nextLine();
+
+            switch (opcion){
+                case 1:
+                    buscarSerieWeb();
+                    break;
+                case 2:
+                    buscarEpisodioPorSerie();
+                    break;
+                case 3:
+                    mostrarSeriesBuscadas();
+                    break;
+
+                case 0:
+                    System.out.println("Cerrando aplicacion");
+                    break:
+                default:
+                    System.out.println("Opcion invalida");
+            }
+        }
         System.out.println("Por favor escribe el nombre de la serie que deseas buscar");
         //Busca los datos generales de las series
         var nombreSerie = teclado.nextLine();
@@ -116,7 +149,22 @@ public class Principal {
                 .collect(Collectors.groupingBy(Episodio::getNumeroTemporada,
                         Collectors.averagingDouble(Episodio::getEvaluacion)));
         System.out.println(evaluacionesPorTemporada);
+        DoubleSummaryStatistics  estadistica = episodios.stream()
+                .filter(e -> e.getEvaluacion()>0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getEvaluacion));
+        System.out.println("La media de las evaluaciones "+estadistica.getAverage());
+        System.out.println("Episodio mejor evaluado "+estadistica.getMax());
+        System.out.println("Episodio menor evaluado "+estadistica.getMin());
 
+        private void buscarSerieWeb(){
+            DatosSerie datos = getDatosSerie();
+            datosSeries.add(datos);
+            System.out.println(datos);
+        }
 
+    }
+
+    private void mostrarSeriesBuscadas() {
+        datosSeries.forEach(System.out::println);
     }
 }
