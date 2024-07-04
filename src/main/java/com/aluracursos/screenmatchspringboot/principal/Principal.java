@@ -97,7 +97,7 @@ public class Principal {
                 ));*/
 
         //Busca episodios por pedazo de texto del titulo
-        System.out.println("por favor escriba el titulo o parte del titulo, del episodio que desea ver");
+        /*System.out.println("por favor escriba el titulo o parte del titulo, del episodio que desea ver");
         var pedazoTitulo = teclado.nextLine();
 
         Optional<Episodio> first = episodios.stream()
@@ -110,7 +110,12 @@ public class Principal {
             System.out.println("Lo datos son: "+first.get());
         } else{
             System.out.println("Episodio no encontrado");
-        }
+        }*/
+        Map<Integer , Double> evaluacionesPorTemporada = episodios.stream()
+                .filter(e -> e.getEvaluacion()>0.0)
+                .collect(Collectors.groupingBy(Episodio::getNumeroTemporada,
+                        Collectors.averagingDouble(Episodio::getEvaluacion)));
+        System.out.println(evaluacionesPorTemporada);
 
 
     }
