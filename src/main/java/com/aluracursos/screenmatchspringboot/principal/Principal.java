@@ -1,9 +1,6 @@
 package com.aluracursos.screenmatchspringboot.principal;
 
-import com.aluracursos.screenmatchspringboot.model.DatosEpisodio;
-import com.aluracursos.screenmatchspringboot.model.DatosSerie;
-import com.aluracursos.screenmatchspringboot.model.DatosTemporadas;
-import com.aluracursos.screenmatchspringboot.model.Episodio;
+import com.aluracursos.screenmatchspringboot.model.*;
 import com.aluracursos.screenmatchspringboot.service.ConsumoAPI;
 import com.aluracursos.screenmatchspringboot.service.ConvierteDatos;
 
@@ -39,7 +36,7 @@ public class Principal {
                     buscarSerieWeb();
                     break;
                 case 2:
-                    buscarEpisodioPorSerie();
+                    buscarEpisodiosPorSerie();
                     break;
                 case 3:
                     mostrarSeriesBuscadas();
@@ -47,30 +44,46 @@ public class Principal {
 
                 case 0:
                     System.out.println("Cerrando aplicacion");
-                    break:
+                    break;
                 default:
                     System.out.println("Opcion invalida");
             }
         }
+
+
+
+
+
+
+    }
+
+    private DatosSerie getDatosSerie(){
         System.out.println("Por favor escribe el nombre de la serie que deseas buscar");
         //Busca los datos generales de las series
         var nombreSerie = teclado.nextLine();
-        var json = consumoAPI.obtenerDatos(URL_BASE+nombreSerie.replace(" ","+")+API_KEY);
+        var json = consumoAPI.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+") + API_KEY);
 
         //aqui puede ser recibir cualquier clase, y en este caso ponemos datosSerie
         var datos = conversor.obtenerDatos(json, DatosSerie.class);
         System.out.println(json);
         System.out.println(datos);
+        return datos;
+    }
 
+    private void buscarEpisodiosPorSerie(){
+        DatosSerie datos = getDatosSerie();
         //Busca los datos de todas las temporadas
         List<DatosTemporadas> temporadas = new ArrayList<>(); // se crea un arraylist para almacenar objetos DatosTemporadas
+
         for (int i = 1; i <= datos.totalDeTemporadas(); i++) {
-            json = consumoAPI.obtenerDatos(URL_BASE+nombreSerie.replace(" ","+")+"&Season="+i+API_KEY);
+            // el error que mostraba en nombre serie al mandarlo en el url, se corrigio con la funcion "datos.titulo"
+            var json = consumoAPI.obtenerDatos(URL_BASE+datos.titulo().replace(" ","+")+"&Season="+i+API_KEY);
             var datosTemporadas = conversor.obtenerDatos(json, DatosTemporadas.class);
             temporadas.add(datosTemporadas);
         }
         temporadas.forEach(System.out::println);
 
+        /*
         //Mostrar solo el titulo de los episodios parar las temporadas
         for (int i = 0; i < datos.totalDeTemporadas(); i++) {
             List<DatosEpisodio> episodiosTemporada = temporadas.get(i).episodios();
@@ -79,7 +92,7 @@ public class Principal {
 
             }
         }
-        //mejoria usando funcuines lambda
+        //mejoria usando funciones lambda
         //temporadas.forEach(t  -> t.episodios().forEach(e -> System.out.println(e.titulo())));
 
         //Convertir todas las informaciones a una lista del tipo DatosEpisodio
@@ -107,7 +120,7 @@ public class Principal {
         //convirtiendo los datos a una lista del tipo Episodio
         List<Episodio> episodios = temporadas.stream()
                 .flatMap(t -> t.episodios().stream()
-                    .map(d -> new Episodio(t.numero(),d)))
+                        .map(d -> new Episodio(t.numero(),d)))
                 .collect(Collectors.toList());
 
         episodios.forEach(System.out::println);
@@ -144,7 +157,7 @@ public class Principal {
         } else{
             System.out.println("Episodio no encontrado");
         }*/
-        Map<Integer , Double> evaluacionesPorTemporada = episodios.stream()
+        /*Map<Integer , Double> evaluacionesPorTemporada = episodios.stream()
                 .filter(e -> e.getEvaluacion()>0.0)
                 .collect(Collectors.groupingBy(Episodio::getNumeroTemporada,
                         Collectors.averagingDouble(Episodio::getEvaluacion)));
@@ -155,16 +168,22 @@ public class Principal {
         System.out.println("La media de las evaluaciones "+estadistica.getAverage());
         System.out.println("Episodio mejor evaluado "+estadistica.getMax());
         System.out.println("Episodio menor evaluado "+estadistica.getMin());
+        */
+    }
 
-        private void buscarSerieWeb(){
-            DatosSerie datos = getDatosSerie();
-            datosSeries.add(datos);
-            System.out.println(datos);
-        }
-
+    private void buscarSerieWeb(){
+        DatosSerie datos = getDatosSerie();
+        datosSeries.add(datos);
+        System.out.println(datos);
     }
 
     private void mostrarSeriesBuscadas() {
-        datosSeries.forEach(System.out::println);
+        List<Serie> series = new ArrayList<>();
+        series = datosSeries.stream()
+                        .map(d -> new Serie(d))
+                        .collect(Collectors.toList());
+        series.stream()
+                        .sorted(Comparator.comparing(Serie::getGenero))
+                        .forEach(System.out::println);
     }
 }

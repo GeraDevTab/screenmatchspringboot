@@ -9,5 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true) //esta anotacion es para que ignore los demas atributos que no estamos llamando en el metodo
 public record DatosSerie(@JsonAlias("Title")  String titulo,
                          @JsonAlias("totalSeasons") Integer totalDeTemporadas,
-                         @JsonAlias("imdbRating") String evaluacion) {
+                         @JsonAlias("imdbRating") String evaluacion,
+                         @JsonAlias("Poster") String poster,
+                         @JsonAlias("Genre") String genero,
+                         @JsonAlias("Actors") String actores,
+                         @JsonAlias("Plot") String sinopsis) {
 }
