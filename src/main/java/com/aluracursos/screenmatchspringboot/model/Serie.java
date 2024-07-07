@@ -21,8 +21,17 @@ public class Serie {
     private String actores;
     private String sinopsis;
     //@Transient comentamos esta anotacion, por que ya no la vaos a usar, ahora si vamos a hacer la relacion
-    @OneToMany(mappedBy = "serie")
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episodio> episodios;
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e->e.setSerie(this));
+        this.episodios = episodios;
+    }
 
     public Serie() {
     }
@@ -111,6 +120,7 @@ public class Serie {
                 ", poster='" + poster + '\'' +
                 ", genero=" + genero +
                 ", actores='" + actores + '\'' +
-                ", sinopsis='" + sinopsis + '\'';
+                ", sinopsis='" + sinopsis + '\''+
+                        ", episodios='" + episodios + '\'';
     }
 }
