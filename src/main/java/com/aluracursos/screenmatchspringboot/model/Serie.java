@@ -1,12 +1,21 @@
 package com.aluracursos.screenmatchspringboot.model;
 
-import java.util.OptionalDouble;
+import jakarta.persistence.*;
 
+import javax.annotation.processing.Generated;
+import java.util.OptionalDouble;
+@Entity //con esta anotacion, indico que esta clase va a ser una tabla
+@Table(name = "series") //con esta anotacion indico que quiero un nombre diferente que el de la clase y escribo el nombre deseado entre parentesis y entre comillas
 public class Serie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true) //con esta anotacion indico que el titulo debe ser unico, es decir, no debe repetirse
     private String titulo;
     private Integer totalTemporadas;
     private Double evaluacion;
     private String poster;
+    @Enumerated(EnumType.STRING)
     private Categoria genero;
     private String actores;
     private String sinopsis;
@@ -19,6 +28,14 @@ public class Serie {
         this.actores = datosSerie.actores();
         this.sinopsis = datosSerie.sinopsis();
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitulo() {
