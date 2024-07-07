@@ -3,6 +3,7 @@ package com.aluracursos.screenmatchspringboot.model;
 import jakarta.persistence.*;
 
 import javax.annotation.processing.Generated;
+import java.util.List;
 import java.util.OptionalDouble;
 @Entity //con esta anotacion, indico que esta clase va a ser una tabla
 @Table(name = "series") //con esta anotacion indico que quiero un nombre diferente que el de la clase y escribo el nombre deseado entre parentesis y entre comillas
@@ -19,6 +20,8 @@ public class Serie {
     private Categoria genero;
     private String actores;
     private String sinopsis;
+    @Transient
+    private List<Episodio> episodios;
     public Serie(DatosSerie datosSerie){
         this.titulo= datosSerie.titulo();
         this.totalTemporadas = datosSerie.totalDeTemporadas();

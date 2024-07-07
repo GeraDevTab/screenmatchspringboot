@@ -1,6 +1,7 @@
 package com.aluracursos.screenmatchspringboot.principal;
 
 import com.aluracursos.screenmatchspringboot.model.*;
+import com.aluracursos.screenmatchspringboot.repository.SerieRepository;
 import com.aluracursos.screenmatchspringboot.service.ConsumoAPI;
 import com.aluracursos.screenmatchspringboot.service.ConvierteDatos;
 
@@ -16,6 +17,11 @@ public class Principal {
     private final String API_KEY = "&apikey=4830f843";
     private ConvierteDatos conversor = new ConvierteDatos();
     private List<DatosSerie> datosSeries = new ArrayList<>();
+    private SerieRepository repositorio;
+
+    public Principal(SerieRepository repository) {
+        this.repositorio= repository;
+    }
 
     public void muestraElMenu(){
 
@@ -173,7 +179,9 @@ public class Principal {
 
     private void buscarSerieWeb(){
         DatosSerie datos = getDatosSerie();
-        datosSeries.add(datos);
+        Serie serie = new Serie(datos);
+        repositorio.save(serie);
+        //datosSeries.add(datos);
         System.out.println(datos);
     }
 
