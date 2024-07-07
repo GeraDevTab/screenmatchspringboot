@@ -20,7 +20,8 @@ public class Serie {
     private Categoria genero;
     private String actores;
     private String sinopsis;
-    @Transient
+    //@Transient comentamos esta anotacion, por que ya no la vaos a usar, ahora si vamos a hacer la relacion
+    @OneToMany(mappedBy = "serie")
     private List<Episodio> episodios;
 
     public Serie() {
