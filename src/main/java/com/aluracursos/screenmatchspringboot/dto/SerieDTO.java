@@ -4,7 +4,8 @@ import com.aluracursos.screenmatchspringboot.model.Categoria;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
-public record SerieDTO( String titulo,
+public record SerieDTO( Long id,
+                        String titulo,
          Integer totalTemporadas,
          Double evaluacion,
          String poster,
